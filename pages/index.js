@@ -1,11 +1,15 @@
 import Head from "next/head";
 import Image from "next/image";
 
-import styles from "../styles/Home.module.css";
 import coffeeStoresData from "../data/coffee-stores.json";
+
+import styles from "../styles/Home.module.css";
 
 import Banner from "../components/Banner/Banner";
 import Card from "../components/Card/Card";
+
+const imgPlaceholder =
+  "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80";
 
 export default function Home(props) {
   const handleOnBannerBtnClick = () => {
@@ -39,10 +43,10 @@ export default function Home(props) {
             <div className={styles.cardLayout}>
               {props.coffeeStores.map((store) => (
                 <Card
-                  key={store.id}
+                  key={store.fsq_id}
                   name={store.name}
-                  imgUrl={store.imgUrl}
-                  href={`/coffee-store/${store.id}`}
+                  imgUrl={store.imgUrl || imgPlaceholder}
+                  href={`/coffee-store/${store.fsq_id}`}
                 />
               ))}
             </div>
@@ -54,9 +58,24 @@ export default function Home(props) {
 }
 
 export async function getStaticProps(context) {
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "fsq3AS5cAI8DfiOJG3BwVrpH+Tx2+o/nXIkIasA8N0EexwA=",
+    },
+  };
+
+  const response = await fetch(
+    "https://api.foursquare.com/v3/places/search?query=coffee&limit=6",
+    options
+  );
+  const data = await response.json();
+  // .catch((err) => console.error(err));
+
   return {
     props: {
-      coffeeStores: coffeeStoresData,
+      coffeeStores: data.results,
     }, // will be passed to the page component as props
   };
 }
