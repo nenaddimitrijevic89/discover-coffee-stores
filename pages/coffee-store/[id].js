@@ -6,19 +6,21 @@ import coffeeStoresData from "../../data/coffee-stores.json";
 const CoffeeStore = (props) => {
   const router = useRouter();
   const { id } = router.query;
-  
+
   if (router.isFallback) {
     return <div>Loading....</div>;
   }
 
+  const { address, name, neighbourhood } = props;
+
   return (
     <div>
-      <p>Coffee Store {id}</p>
       <Link href="/">
         <a>go back</a>
       </Link>
-      <p>{props.coffeeStore.address}</p>
-      <p>{props.coffeeStore.name}</p>
+      <p>{address}</p>
+      <p>{name}</p>
+      <p>{neighbourhood}</p>
     </div>
   );
 };
@@ -35,11 +37,11 @@ export function getStaticProps(staticProps) {
 }
 
 export function getStaticPaths() {
+  const paths = coffeeStoresData.map((store) => ({
+    params: { id: store.id.toString() },
+  }));
   return {
-    // paths: coffeeStoresData.map((store) => ({
-    //   params: { id: store.id.toString() },
-    // })),
-    paths: [{ params: { id: "0" } }, { params: { id: "1" } }],
+    paths,
     fallback: true,
   };
 }
