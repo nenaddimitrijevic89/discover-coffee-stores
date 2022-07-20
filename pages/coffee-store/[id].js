@@ -9,8 +9,6 @@ import coffeeStoresData from "../../data/coffee-stores.json";
 
 import styles from "../../styles/coffee-store.module.css";
 
-const apiKey = "fsq3AS5cAI8DfiOJG3BwVrpH+Tx2+o/nXIkIasA8N0EexwA=";
-
 const CoffeeStore = (props) => {
   const router = useRouter();
 
