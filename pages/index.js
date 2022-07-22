@@ -57,7 +57,7 @@ export default function Home(props) {
 }
 
 export async function getStaticProps(context) {
-  const coffeeStores = fetchStores();
+  const coffeeStores = await fetchStores();
 
   return {
     props: {
