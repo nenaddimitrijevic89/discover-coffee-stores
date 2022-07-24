@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -14,10 +15,27 @@ const imgPlaceholder =
 export default function Home(props) {
   const { latLong, locationErrorMsg, handleTrackLocation, isFindingLocation } =
     useTrackLocation();
+  const [coffeeStores, setCoffeeStores] = useState([]);
+  const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
   const handleOnBannerBtnClick = () => {
     handleTrackLocation();
   };
+
+  useEffect(() => {
+    async function setCoffeeStoresByLocation() {
+      if (latLong) {
+        try {
+          const fetchedCoffeeStores = await fetchStores(latLong, 30);
+          setCoffeeStores(fetchedCoffeeStores);
+        } catch (error) {
+          //set error
+          setCoffeeStoresError(error.message)
+        }
+      }
+    }
+    setCoffeeStoresByLocation();
+  }, [latLong]);
 
   return (
     <div className={styles.container}>
@@ -33,6 +51,7 @@ export default function Home(props) {
           handleOnClick={handleOnBannerBtnClick}
         />
         {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
+        {coffeeStoresError && <p>Something went wrong: {coffeeStoresError}</p>}
         <div className={styles.heroImage}>
           <Image
             src="/static/hero-image.png"
@@ -42,6 +61,21 @@ export default function Home(props) {
           />
         </div>
         <div className={styles.sectionWrapper}>
+        {coffeeStores.length > 0 && (
+            <>
+              <h2 className={styles.heading2}>Stores near me</h2>
+              <div className={styles.cardLayout}>
+                {coffeeStores.map((store) => (
+                  <Card
+                    key={store.id}
+                    name={store.name}
+                    imgUrl={store.imgUrl || imgPlaceholder}
+                    href={`/coffee-store/${store.id}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
           {props.coffeeStores.length > 0 && (
             <>
               <h2 className={styles.heading2}>Toronto stores</h2>
