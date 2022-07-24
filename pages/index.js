@@ -42,10 +42,10 @@ export default function Home(props) {
             <div className={styles.cardLayout}>
               {props.coffeeStores.map((store) => (
                 <Card
-                  key={store.fsq_id}
+                  key={store.id}
                   name={store.name}
                   imgUrl={store.imgUrl || imgPlaceholder}
-                  href={`/coffee-store/${store.fsq_id}`}
+                  href={`/coffee-store/${store.id}`}
                 />
               ))}
             </div>
