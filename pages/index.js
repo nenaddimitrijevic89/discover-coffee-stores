@@ -30,7 +30,7 @@ export default function Home(props) {
           setCoffeeStores(fetchedCoffeeStores);
         } catch (error) {
           //set error
-          setCoffeeStoresError(error.message)
+          setCoffeeStoresError(error.message);
         }
       }
     }
@@ -61,7 +61,7 @@ export default function Home(props) {
           />
         </div>
         <div className={styles.sectionWrapper}>
-        {coffeeStores.length > 0 && (
+          {coffeeStores.length > 0 && (
             <>
               <h2 className={styles.heading2}>Stores near me</h2>
               <div className={styles.cardLayout}>
