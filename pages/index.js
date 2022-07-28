@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -9,25 +9,33 @@ import useTrackLocation from "../hooks/use-track-location";
 import Banner from "../components/Banner/Banner";
 import Card from "../components/Card/Card";
 
+import { ACTION_TYPES, StoreContext } from "./_app";
+
 const imgPlaceholder =
   "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80";
 
 export default function Home(props) {
-  const { latLong, locationErrorMsg, handleTrackLocation, isFindingLocation } =
+  const { locationErrorMsg, handleTrackLocation, isFindingLocation } =
     useTrackLocation();
-  const [coffeeStores, setCoffeeStores] = useState([]);
+
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
-  const handleOnBannerBtnClick = () => {
-    handleTrackLocation();
-  };
+  const { dispatch, state } = useContext(StoreContext);
+
+  const { coffeeStores, latLong } = state;
 
   useEffect(() => {
     async function setCoffeeStoresByLocation() {
       if (latLong) {
         try {
           const fetchedCoffeeStores = await fetchStores(latLong, 30);
-          setCoffeeStores(fetchedCoffeeStores);
+
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: {
+              coffeeStores: fetchedCoffeeStores,
+            },
+          });
         } catch (error) {
           //set error
           setCoffeeStoresError(error.message);
@@ -36,6 +44,10 @@ export default function Home(props) {
     }
     setCoffeeStoresByLocation();
   }, [latLong]);
+
+  const handleOnBannerBtnClick = () => {
+    handleTrackLocation();
+  };
 
   return (
     <div className={styles.container}>
