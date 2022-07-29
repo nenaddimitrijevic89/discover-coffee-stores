@@ -4,12 +4,13 @@ import Image from "next/image";
 
 import styles from "../styles/Home.module.css";
 
+import { ACTION_TYPES, StoreContext } from "../store/store-context";
 import { fetchStores } from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/use-track-location";
+
 import Banner from "../components/Banner/Banner";
 import Card from "../components/Card/Card";
 
-import { ACTION_TYPES, StoreContext } from "./_app";
 
 const imgPlaceholder =
   "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80";
