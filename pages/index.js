@@ -11,7 +11,6 @@ import useTrackLocation from "../hooks/use-track-location";
 import Banner from "../components/Banner/Banner";
 import Card from "../components/Card/Card";
 
-
 const imgPlaceholder =
   "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80";
 
@@ -29,14 +28,19 @@ export default function Home(props) {
     async function setCoffeeStoresByLocation() {
       if (latLong) {
         try {
-          const fetchedCoffeeStores = await fetchStores(latLong, 30);
+          const response = await fetch(
+            `/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=30`
+          );
 
+          const coffeeStores = await response.json();
+          
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
             payload: {
-              coffeeStores: fetchedCoffeeStores,
+              coffeeStores,
             },
           });
+          setCoffeeStoresError("");
         } catch (error) {
           //set error
           setCoffeeStoresError(error.message);
