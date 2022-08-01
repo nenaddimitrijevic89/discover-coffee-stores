@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
-
 import cls from "classnames";
 
 import styles from "../../styles/coffee-store.module.css";
@@ -12,31 +11,60 @@ import { StoreContext } from "../../store/store-context";
 import { fetchStores } from "../../lib/coffee-stores";
 import { isEmpty } from "../../utils";
 
-
 const imgPlaceholder =
   "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80";
 
 const CoffeeStore = (initialProps) => {
   const router = useRouter();
-
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
-
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
-
   const id = router.query.id;
+
+  const handleCreateCoffeeStore = async (coffeeStore) => {
+    const { id, name, address, neighborhood, imgUrl } = coffeeStore;
+    
+    try {
+      const response = await fetch("/api/createCoffeeStore", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          name,
+          address: address || "",
+          neighborhood: neighborhood || "",
+          voting: 0,
+          imgUrl,
+        }),
+      });
+
+      const dbCoffeeStore = await response.json();
+      console.log({ dbCoffeeStore });
+    } catch (err) {
+      console.error("Error creating coffee store", err);
+    }
+  };
 
   useEffect(() => {
     if (isEmpty(initialProps.coffeeStore)) {
       if (coffeeStores.length > 0) {
-        const findCoffeeStoreById = coffeeStores.find(
+        const coffeeStoreFromContext = coffeeStores.find(
           (coffeeStore) => coffeeStore.id.toString() === id
         );
-        setCoffeeStore(findCoffeeStoreById);
+
+        if (coffeeStoreFromContext) {
+          setCoffeeStore(coffeeStoreFromContext);
+          handleCreateCoffeeStore(coffeeStoreFromContext);
+        }
       }
+    } else {
+      //SSG
+      handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id]);
+  }, [id, initialProps.coffeeStore]);
 
   const { address, name, neighborhood, imgUrl } = coffeeStore;
 
