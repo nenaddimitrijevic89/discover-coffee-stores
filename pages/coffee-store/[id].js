@@ -72,7 +72,7 @@ const CoffeeStore = (initialProps) => {
 
   const { address, name, neighborhood, imgUrl } = coffeeStore;
 
-  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+  const { data } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
 
   useEffect(() => {
     if (data && data.length > 0) {
