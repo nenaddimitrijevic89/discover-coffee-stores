@@ -23,7 +23,7 @@ const CoffeeStore = (initialProps) => {
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore|| {});
   const [votingCount, setVotingCount] = useState(0);
   const id = router.query.id;
 
@@ -68,11 +68,11 @@ const CoffeeStore = (initialProps) => {
       //SSG
       handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id, initialProps, initialProps.coffeeStore]);
+  }, [id, initialProps, initialProps.coffeeStore, coffeeStores]);
 
-  const { address, name, neighborhood, imgUrl } = coffeeStore;
+  const { address = "", name = "", neighborhood ="", imgUrl="" } = coffeeStore;
 
-  const { data } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -106,6 +106,10 @@ const CoffeeStore = (initialProps) => {
 
   if (router.isFallback) {
     return <div>Loading....</div>;
+  }
+
+  if (error) {
+    return <div>Something went wrong retrieving coffee store page</div>;
   }
 
   return (
